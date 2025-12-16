@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CalibraCore Lab - Dashboard">
+    <title>Dashboard - CalibraCore Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/animations.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="container">
+                <a href="/dashboard" class="navbar-brand">
+                    <span class="logo-icon">⚗️</span>
+                    <span>CalibraCore Lab</span>
+                </a>
+
+                <div class="navbar-menu">
+                    <a href="/dashboard" class="navbar-link active">Dashboard</a>
+                    <a href="/equipamentos" class="navbar-link">Equipamentos</a>
+                    <a href="/usuarios" class="navbar-link" data-admin-only>Usuários</a>
+                </div>
+
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-name" id="user-name">Usuário</div>
+                        <div class="user-role" id="user-role">Papel</div>
+                    </div>
+                    <button class="btn-logout" id="btn-logout">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Page Header -->
+                <div style="margin-bottom: 2rem;">
+                    <h1>Dashboard</h1>
+                    <p class="text-muted">Visão geral do controle de calibração</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="stat-total">-</div>
+                        <div class="stat-label">Total de Equipamentos</div>
+                    </div>
+
+                    <div class="stat-card ok">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-value" id="stat-ok">-</div>
+                        <div class="stat-label">Em Dia</div>
+                    </div>
+
+                    <div class="stat-card warning-60">
+                        <div class="stat-icon">⚠</div>
+                        <div class="stat-value" id="stat-60">-</div>
+                        <div class="stat-label">Vencem em 60 dias</div>
+                    </div>
+
+                    <div class="stat-card warning-30">
+                        <div class="stat-icon">⚠</div>
+                        <div class="stat-value" id="stat-30">-</div>
+                        <div class="stat-label">Vencem em 30 dias</div>
+                    </div>
+
+                    <div class="stat-card danger">
+                        <div class="stat-icon">✕</div>
+                        <div class="stat-value" id="stat-vencidos">-</div>
+                        <div class="stat-label">Vencidos</div>
+                    </div>
+                </div>
+
+                <!-- Equipment Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Equipamentos</h3>
+                        <div class="table-filters">
+                            <select class="form-control form-select" id="filter-status" style="min-width: 160px;">
+                                <option value="">Todos os status</option>
+                                <option value="em_dia">Em dia</option>
+                                <option value="proximo_60">Vence em 60 dias</option>
+                                <option value="proximo_30">Vence em 30 dias</option>
+                                <option value="vencido">Vencido</option>
+                            </select>
+                            <select class="form-control form-select" id="filter-lab" style="min-width: 180px;">
+                                <option value="">Todos os laboratórios</option>
+                            </select>
+                            <input type="text" class="form-control" id="filter-search" placeholder="Buscar..."
+                                style="min-width: 200px;">
+                        </div>
+                    </div>
+
+                    <div id="table-loading" class="loading">
+                        <div class="spinner"></div>
+                    </div>
+
+                    <div id="table-empty" class="empty-state" style="display: none;">
+                        <div class="icon">📋</div>
+                        <h3>Nenhum equipamento encontrado</h3>
+                        <p>Cadastre equipamentos para começar a monitorar as calibrações.</p>
+                    </div>
+
+                    <table id="equipment-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descrição</th>
+                                <th>Laboratório</th>
+                                <th>Última Calibração</th>
+                                <th>Vencimento</th>
+                                <th>Dias</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equipment-tbody">
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="pagination" style="display: none;">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>

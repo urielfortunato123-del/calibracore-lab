@@ -1,0 +1,25 @@
+COMO USAR O SISTEMA CALIBRACORE LAB
+===================================
+
+1. COLO INICIAR
+   - Vá até a pasta do projeto.
+   - Dê dois cliques no arquivo "ABRIR_AGORA.bat".
+   - Uma janela preta vai abrir (é o servidor, não feche ela!).
+   - Em seguida, o sistema abrirá na tela parecendo um aplicativo.
+
+2. ACESSO (LOGIN)
+   - Email: admin@calibracore.lab
+   - Senha: admin123
+
+3. FUNCIONALIDADES
+   - Dashboard: Visão geral com alertas visuais (piscando) e sonoros.
+   - Equipamentos: Cadastre, edite e controle vencimentos.
+   - Usuários: Crie logins para outros funcionários.
+
+4. EM REDE (LOCAL)
+   - Para acessar de outro computador no MESMO ESCRITÓRIO:
+   - Descubra o IP deste computador (comando 'ipconfig').
+   - No outro PC, digite no navegador: http://SEU_IP:8000
+
+5.SUPORTE
+   - Desenvolvido por Uriel da Fonseca Fortunato - Núcleo Engenharia Consultiva.

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CalibraCore Lab - Gestão de Equipamentos">
+    <title>Equipamentos - CalibraCore Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/animations.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="container">
+                <a href="/dashboard" class="navbar-brand">
+                    <img src="/img/logo.png" alt="Núcleo" style="height: 40px; margin-right: 10px;">
+                    <span>CalibraCore Lab</span>
+                </a>
+
+                <div class="navbar-menu">
+                    <a href="/dashboard" class="navbar-link">Dashboard</a>
+                    <a href="/equipamentos" class="navbar-link active">Equipamentos</a>
+                    <a href="/usuarios" class="navbar-link" data-admin-only>Usuários</a>
+                </div>
+
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-name" id="user-name">Usuário</div>
+                        <div class="user-role" id="user-role">Papel</div>
+                    </div>
+                    <button class="btn-logout" id="btn-logout">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Page Header -->
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1>Equipamentos</h1>
+                        <p class="text-muted">Gerenciamento de equipamentos e calibrações</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-novo">
+                        <span>+ Novo Equipamento</span>
+                    </button>
+                </div>
+
+                <div id="alert-container"></div>
+
+                <!-- Equipment Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Lista de Equipamentos</h3>
+                        <div class="table-filters">
+                            <select class="form-control form-select" id="filter-categoria" style="min-width: 160px;">
+                                <option value="">Todas as categorias</option>
+                            </select>
+                            <select class="form-control form-select" id="filter-status" style="min-width: 160px;">
+                                <option value="">Todos os status</option>
+                                <option value="em_dia">Em dia</option>
+                                <option value="proximo_60">Vence em 60 dias</option>
+                                <option value="proximo_30">Vence em 30 dias</option>
+                                <option value="vencido">Vencido</option>
+                            </select>
+                            <input type="text" class="form-control" id="filter-search" placeholder="Buscar..."
+                                style="min-width: 200px;">
+                        </div>
+                    </div>
+
+                    <div id="table-loading" class="loading">
+                        <div class="spinner"></div>
+                    </div>
+
+                    <div id="table-empty" class="empty-state" style="display: none;">
+                        <div class="icon">📋</div>
+                        <h3>Nenhum equipamento encontrado</h3>
+                        <p>Clique em "Novo Equipamento" para cadastrar.</p>
+                    </div>
+
+                    <table id="equipment-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Equipamento</th>
+                                <th>Categoria</th>
+                                <th>Marca</th>
+                                <th>Certificado</th>
+                                <th>Calibração</th>
+                                <th>Vencimento</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equipment-tbody">
+                        </tbody>
+                    </table>
+
+                    <div class="pagination" id="pagination" style="display: none;">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Cadastro/Edição de Equipamento -->
+    <div class="modal-overlay" id="modal-equipamento">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Novo Equipamento</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <form id="form-equipamento">
+                <div class="modal-body">
+                    <input type="hidden" id="eq-id">
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="eq-codigo">Código Interno *</label>
+                            <input type="text" class="form-control" id="eq-codigo" required
+                                placeholder="Ex: Peneira #200">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="eq-categoria">Categoria *</label>
+                            <select class="form-control form-select" id="eq-categoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="Peneiras">Peneiras</option>
+                                <option value="Balanças">Balanças</option>
+                                <option value="Termômetros">Termômetros</option>
+                                <option value="Relógios Comparadores">Relógios Comparadores</option>
+                                <option value="Provetas Graduadas">Provetas Graduadas</option>
+                                <option value="Beckers">Beckers</option>
+                                <option value="Picnômetros">Picnômetros</option>
+                                <option value="Paquímetros">Paquímetros</option>
+                                <option value="Cronômetros">Cronômetros</option>
+                                <option value="Estufas">Estufas</option>
+                                <option value="Prensas">Prensas</option>
+                                <option value="Dispensadores">Dispensadores</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eq-descricao">Descrição</label>
+                        <input type="text" class="form-control" id="eq-descricao"
+                            placeholder="Ex: Peneira granulométrica 200 mesh">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="eq-marca">Marca</label>
+                            <input type="text" class="form-control" id="eq-marca"
+                                placeholder="Ex: Solotest, Marte, Delta">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="eq-certificado">Nº Certificado</label>
+                            <input type="text" class="form-control" id="eq-certificado" placeholder="Ex: 82512-25">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="eq-ultima-cal">Data da Calibração</label>
+                            <input type="date" class="form-control" id="eq-ultima-cal">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="eq-vencimento">Data de Vencimento *</label>
+                            <input type="date" class="form-control" id="eq-vencimento" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eq-laboratorio">Laboratório *</label>
+                        <input type="text" class="form-control" id="eq-laboratorio" required
+                            placeholder="Ex: Laboratório de Solos" value="Laboratório">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eq-observacoes">Observações</label>
+                        <textarea class="form-control" id="eq-observacoes" rows="2"
+                            placeholder="Informações adicionais..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmação de Exclusão -->
+    <div class="modal-overlay" id="modal-delete">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmar Exclusão</h3>
+                <button class="modal-close" id="modal-delete-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja desativar o equipamento <strong id="delete-eq-name"></strong>?</p>
+                <p class="text-muted">O equipamento será desativado e não aparecerá mais na lista.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-delete-cancelar">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-delete-confirmar">Desativar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/equipamentos.js"></script>
+</body>
+
+</html>

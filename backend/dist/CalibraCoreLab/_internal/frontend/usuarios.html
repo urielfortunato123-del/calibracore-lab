@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CalibraCore Lab - Gestão de Usuários">
+    <title>Usuários - CalibraCore Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="container">
+                <a href="/dashboard" class="navbar-brand">
+                    <img src="/img/logo.png" alt="Núcleo" style="height: 40px; margin-right: 10px;">
+                    <span>CalibraCore Lab</span>
+                </a>
+
+                <div class="navbar-menu">
+                    <a href="/dashboard" class="navbar-link">Dashboard</a>
+                    <a href="/equipamentos" class="navbar-link">Equipamentos</a>
+                    <a href="/usuarios" class="navbar-link active" data-admin-only>Usuários</a>
+                </div>
+
+                <div class="user-menu">
+                    <div class="user-info">
+                        <div class="user-name" id="user-name">Usuário</div>
+                        <div class="user-role" id="user-role">Papel</div>
+                    </div>
+                    <button class="btn-logout" id="btn-logout">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Page Header -->
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h1>Usuários</h1>
+                        <p class="text-muted">Gerenciamento de usuários do sistema</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-novo">
+                        <span>+ Novo Usuário</span>
+                    </button>
+                </div>
+
+                <div id="alert-container"></div>
+
+                <!-- Access Denied Message -->
+                <div id="access-denied" class="empty-state" style="display: none;">
+                    <div class="icon">🔒</div>
+                    <h3>Acesso Restrito</h3>
+                    <p>Você não tem permissão para acessar esta página.</p>
+                    <a href="/dashboard" class="btn btn-primary" style="margin-top: 1rem;">Voltar ao Dashboard</a>
+                </div>
+
+                <!-- Users Table -->
+                <div class="table-container" id="users-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Lista de Usuários</h3>
+                    </div>
+
+                    <div id="table-loading" class="loading">
+                        <div class="spinner"></div>
+                    </div>
+
+                    <div id="table-empty" class="empty-state" style="display: none;">
+                        <div class="icon">👥</div>
+                        <h3>Nenhum usuário encontrado</h3>
+                        <p>Clique em "Novo Usuário" para cadastrar.</p>
+                    </div>
+
+                    <table id="users-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Papel</th>
+                                <th>Laboratório</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Cadastro/Edição de Usuário -->
+    <div class="modal-overlay" id="modal-usuario">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Novo Usuário</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <form id="form-usuario">
+                <div class="modal-body">
+                    <input type="hidden" id="user-id">
+
+                    <div class="form-group">
+                        <label class="form-label" for="user-nome">Nome *</label>
+                        <input type="text" class="form-control" id="user-nome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="user-email">E-mail *</label>
+                        <input type="email" class="form-control" id="user-email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="user-senha">
+                            Senha <span id="senha-hint">*</span>
+                        </label>
+                        <input type="password" class="form-control" id="user-senha" placeholder="Mínimo 6 caracteres">
+                        <small class="text-muted" id="senha-edit-hint" style="display: none;">
+                            Deixe em branco para manter a senha atual.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="user-papel">Papel *</label>
+                        <select class="form-control form-select" id="user-papel" required>
+                            <option value="laboratorio">Laboratório</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="user-laboratorio">Laboratório</label>
+                        <input type="text" class="form-control" id="user-laboratorio"
+                            placeholder="Opcional - para usuários de laboratório">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/usuarios.js"></script>
+</body>
+
+</html>

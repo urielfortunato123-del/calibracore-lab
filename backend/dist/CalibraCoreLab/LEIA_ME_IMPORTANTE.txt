@@ -1,0 +1,12 @@
+COMO USAR NO NOVO COMPUTADOR
+============================
+
+1. Copie esta pasta inteira ("CalibraCoreLab") para o novo computador.
+2. Nao precisa instalar Python.
+3. Nao precisa configurar nada.
+4. Basta abrir o arquivo: "CalibraCoreLab.exe" (o icone do aplicativo).
+
+O sistema vai abrir uma janela preta (servidor) e o navegador automaticamente.
+Mantenha a janela preta aberta enquanto usar o sistema.
+
+Se precisar parar, feche a janela preta.

@@ -1,0 +1,44 @@
+/* Pulse animation for critical alerts */
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+@keyframes pulse-yellow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+}
+
+.row-vencido {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    animation: pulse-red 2s infinite;
+    border-left: 4px solid var(--danger);
+}
+
+.row-proximo-30 {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    animation: pulse-yellow 2s infinite;
+    border-left: 4px solid var(--warning);
+}
+
+.row-proximo-60 {
+    background-color: rgba(255, 193, 7, 0.05) !important;
+}
