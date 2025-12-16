@@ -14,11 +14,10 @@ from app.database import get_db
 from app.models import Usuario, UserRole
 from app.schemas import TokenData
 
-# Password hashing - with bcrypt 4.1+ compatibility
+# Password hashing - using Argon2 for better security and compatibility
 pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__rounds=12
+    schemes=["argon2"],
+    deprecated="auto"
 )
 
 # OAuth2 scheme
