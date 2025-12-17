@@ -52,6 +52,7 @@ async def startup_event():
     # Create default admin user if not exists
     db = SessionLocal()
     try:
+        # Default Admin
         admin = db.query(Usuario).filter(Usuario.email == settings.ADMIN_EMAIL).first()
         if not admin:
             admin = Usuario(
@@ -66,6 +67,59 @@ async def startup_event():
             logger.info(f"Usuário admin criado: {settings.ADMIN_EMAIL}")
         else:
             logger.info("Usuário admin já existe")
+
+        # Additional Users
+        additional_users = [
+            {
+                "nome": "Letícia Silveira",
+                "email": "leticia.silveira@motiva.com.br",
+                "senha": "MotivaLeti9",
+                "papel": UserRole.ADMIN,
+                "laboratorio": "Motiva"
+            },
+            {
+                "nome": "André Pereira",
+                "email": "andre.pereira@motiva.com.br",
+                "senha": "Andre@Motiva9",
+                "papel": UserRole.ADMIN,
+                "laboratorio": "Motiva"
+            },
+            {
+                "nome": "Alan Silva",
+                "email": "alan.silva@nucleoengenharia.com.br",
+                "senha": "NucleoAlan88",
+                "papel": UserRole.ADMIN,
+                "laboratorio": "Núcleo Engenharia"
+            },
+            {
+                "nome": "Fabiano Silva",
+                "email": "fabiano.silva@nucleoengenharia.com.br",
+                "senha": "Fabiano@Eng9",
+                "papel": UserRole.ADMIN,
+                "laboratorio": "Núcleo Engenharia"
+            }
+        ]
+
+        for user_data in additional_users:
+            existing_user = db.query(Usuario).filter(Usuario.email == user_data["email"]).first()
+            if not existing_user:
+                new_user = Usuario(
+                    nome=user_data["nome"],
+                    email=user_data["email"],
+                    senha_hash=get_password_hash(user_data["senha"]),
+                    papel=user_data["papel"],
+                    laboratorio=user_data["laboratorio"],
+                    ativo=True
+                )
+                db.add(new_user)
+                logger.info(f"Usuário criado: {user_data['email']}")
+            else:
+                logger.info(f"Usuário já existe: {user_data['email']}")
+        
+        db.commit()
+    except Exception as e:
+        logger.error(f"Erro ao inicializar usuários: {e}")
+        db.rollback()
     finally:
         db.close()
 
