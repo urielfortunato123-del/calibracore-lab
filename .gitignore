@@ -27,9 +27,3 @@ Thumbs.db
 
 # Uploads
 uploads/
-
-# Security - Credentials (não enviar para GitHub público)
-CREDENCIAIS_USUARIOS.md
-backend/init_users.py
-*credentials*
-*CREDENCIAIS*
