@@ -33,10 +33,13 @@ Este script irá:
 
 ## 🔐 Segurança Implementada
 
-### Arquivos Protegidos no `.gitignore`:
-- `CREDENCIAIS_USUARIOS.md` - Lista de credenciais
-- `backend/init_users.py` - Script de inicialização
-- Qualquer arquivo com `*credentials*` ou `*CREDENCIAIS*`
+### Arquivos no Repositório GitHub:
+- ✅ `CREDENCIAIS_USUARIOS.md` - Lista de credenciais
+- ✅ `backend/init_users.py` - Script de inicialização  
+- ✅ `README_USUARIOS.md` - Documentação completa
+
+> [!IMPORTANT]
+> Os arquivos foram enviados ao repositório para facilitar o deploy no servidor.
 
 ### Hash de Senhas:
 - ✅ Todas as senhas são criptografadas com **Argon2**
@@ -66,19 +69,25 @@ git status
 # Se aparecer CREDENCIAIS_USUARIOS.md ou init_users.py, NÃO COMMITAR!
 ```
 
-### No Servidor (após git pull):
+### 🚀 Como Usar no Servidor
 
-1. Copiar manualmente os arquivos:
-   - `CREDENCIAIS_USUARIOS.md`
-   - `backend/init_users.py`
+### Passo 1: Fazer Git Pull
 
-2. Executar a inicialização:
+```bash
+git pull origin main
+```
+
+Agora **todos os arquivos** necessários estão no repositório, incluindo:
+- ✅ `CREDENCIAIS_USUARIOS.md`
+- ✅ `backend/init_users.py`
+- ✅ `README_USUARIOS.md`
+
+### Passo 2: Executar Inicialização:
    ```bash
    cd backend
    python init_users.py
    ```
 
-3. Guardar o arquivo `CREDENCIAIS_USUARIOS.md` em local seguro
 
 ---
 
