@@ -14,9 +14,9 @@ from app.database import get_db
 from app.models import Usuario, UserRole
 from app.schemas import TokenData
 
-# Password hashing - support both argon2 and bcrypt for compatibility
+# Password hashing - using Argon2
 pwd_context = CryptContext(
-    schemes=["argon2", "bcrypt"],
+    schemes=["argon2"],
     deprecated="auto"
 )
 
