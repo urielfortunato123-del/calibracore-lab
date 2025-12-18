@@ -1,7 +1,7 @@
 """
 CalibraCore Lab - Database Models
 """
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from enum import Enum as PyEnum
 from sqlalchemy import Column, Integer, String, Boolean, Date, DateTime, ForeignKey, Enum, Text
 from sqlalchemy.orm import relationship

@@ -294,7 +294,14 @@ const Utils = {
      */
     formatDateTime(dateStr) {
         if (!dateStr) return '-';
-        const date = new Date(dateStr);
+
+        // Ensure browser treats naive ISO strings from backend as UTC
+        let normalized = dateStr;
+        if (!dateStr.includes('Z') && !dateStr.includes('+') && dateStr.includes('T')) {
+            normalized = dateStr + 'Z';
+        }
+
+        const date = new Date(normalized);
         return date.toLocaleString('pt-BR');
     },
 
