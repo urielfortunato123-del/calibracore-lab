@@ -67,6 +67,13 @@ async function loadDashboard() {
             document.querySelector('.stat-card.warning-30').classList.add('blink-warning');
         }
 
+        // Voice Greeting
+        const user = await API.getMe();
+        // Small delay to ensure voices are loaded
+        setTimeout(() => {
+            VoiceService.greetUser(user.nome, resumo);
+        }, 1000);
+
     } catch (error) {
         console.error('Error loading dashboard:', error);
     }
@@ -192,6 +199,7 @@ async function loadEquipments() {
             pagination.style.display = 'flex';
             buildPagination(response.page, response.pages);
         }
+
 
     } catch (error) {
         console.error('Error loading equipment:', error);
