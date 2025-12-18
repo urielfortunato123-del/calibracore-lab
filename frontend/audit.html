@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit Logs - CalibraCore Lab</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Histórico de Auditoria - CalibraCore Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/animations.css">
 </head>
 
 <body>
@@ -16,23 +18,23 @@
         <nav class="navbar">
             <div class="container">
                 <a href="/dashboard" class="navbar-brand">
-                    <i class="fas fa-microscope logo-icon"></i>
+                    <img src="/img/logo_white.png" alt="Núcleo" style="height: 40px; margin-right: 10px;">
                     <span>CalibraCore Lab</span>
                 </a>
+
                 <div class="navbar-menu">
                     <a href="/dashboard" class="navbar-link">Dashboard</a>
                     <a href="/equipamentos" class="navbar-link">Equipamentos</a>
-                    <a href="/usuarios" class="navbar-link" id="nav-users" style="display: none;">Usuários</a>
-                    <a href="/audit.html" class="navbar-link active" id="nav-audit" style="display: none;">Auditoria</a>
+                    <a href="/usuarios" class="navbar-link" data-admin-only>Usuários</a>
+                    <a href="/audit.html" class="navbar-link active" data-admin-only>Auditoria</a>
                 </div>
+
                 <div class="user-menu">
                     <div class="user-info">
                         <div class="user-name" id="user-name">Usuário</div>
-                        <div class="user-role" id="user-role">Laboratório</div>
+                        <div class="user-role" id="user-role">Papel</div>
                     </div>
-                    <button class="btn-logout" id="btn-logout" title="Sair">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                    <button class="btn-logout" id="btn-logout">Sair</button>
                 </div>
             </div>
         </nav>
@@ -40,163 +42,121 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="container">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Histórico de Auditoria</div>
-                        <div class="table-filters">
-                            <button class="btn btn-secondary btn-sm" onclick="loadAuditLogs()">
-                                <i class="fas fa-sync-alt"></i> Atualizar
-                            </button>
-                        </div>
+                <!-- Page Header -->
+                <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <h1>Auditoria</h1>
+                        <p class="text-muted">Histórico completo de alterações no sistema</p>
                     </div>
+                    <button class="btn btn-secondary" onclick="loadAuditLogs()">
+                        <span>🔄 Atualizar</span>
+                    </button>
+                </div>
 
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data/Hora</th>
-                                    <th>Usuário</th>
-                                    <th>Ação</th>
-                                    <th>Tabela</th>
-                                    <th>ID Registro</th>
-                                    <th>Detalhes</th>
-                                </tr>
-                            </thead>
-                            <tbody id="audit-table-body">
-                                <!-- Data will be populated by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="loading" class="loading" style="display: none;">
+                <div class="table-container">
+                    <div id="table-loading" class="loading">
                         <div class="spinner"></div>
                     </div>
-                    <div id="empty-state" class="empty-state" style="display: none;">
-                        <i class="fas fa-clipboard-list icon"></i>
+
+                    <div id="table-empty" class="empty-state" style="display: none;">
+                        <div class="icon">📜</div>
                         <h3>Nenhum registro encontrado</h3>
                     </div>
+
+                    <table id="audit-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Usuário</th>
+                                <th>Ação</th>
+                                <th>Tabela</th>
+                                <th>ID Registro</th>
+                                <th>Alterações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="audit-tbody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
 
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
     <script>
-        // Check auth and role
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/';
-        }
-
-        function parseJwt(token) {
-            try {
-                return JSON.parse(atob(token.split('.')[1]));
-            } catch (e) {
-                return null;
-            }
-        }
-
-        const user = parseJwt(token);
-        // Show user info
-        if (user) {
-            // Retrieve name from localStorage if saved during login, or generic
-            const name = localStorage.getItem('user_name') || user.sub;
-            document.getElementById('user-name').textContent = name;
-
-            // Check role
-            // Since role is in the token usually but might need decoding
-            // Assuming the token payload has 'role' or we fetched profile
-            // For now, let's assume we saved role in localStorage too for simplicity
-            const role = localStorage.getItem('user_role') || 'laboratorio';
-            document.getElementById('user-role').textContent = role === 'admin' ? 'Administrador' : 'Laboratório';
-
-            if (role === 'admin') {
-                document.getElementById('nav-users').style.display = 'block';
-                document.getElementById('nav-audit').style.display = 'block';
-            } else {
-                alert('Acesso restrito a administradores.');
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!requireAuth()) return;
+            if (!requireAdmin()) {
                 window.location.href = '/dashboard';
+                return;
             }
-        }
 
-        // Logout
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user_role');
-            localStorage.removeItem('user_name');
-            window.location.href = '/';
+            setupNavbar();
+            loadAuditLogs();
         });
 
         async function loadAuditLogs() {
-            const tbody = document.getElementById('audit-table-body');
-            const loading = document.getElementById('loading');
-            const empty = document.getElementById('empty-state');
+            const loading = document.getElementById('table-loading');
+            const empty = document.getElementById('table-empty');
+            const table = document.getElementById('audit-table');
+            const tbody = document.getElementById('audit-tbody');
 
-            tbody.innerHTML = '';
             loading.style.display = 'flex';
             empty.style.display = 'none';
+            table.style.display = 'none';
 
             try {
-                const response = await fetch('/api/audit', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) throw new Error('Falha ao carregar logs');
-
-                const logs = await response.json();
+                const logs = await API.request('/api/audit?limit=100');
 
                 loading.style.display = 'none';
 
-                if (logs.length === 0) {
+                if (!logs || logs.length === 0) {
                     empty.style.display = 'block';
                     return;
                 }
 
-                logs.forEach(log => {
-                    const row = document.createElement('tr');
-                    const date = new Date(log.timestamp).toLocaleString('pt-BR');
-
-                    // Format changes JSON nicely
+                table.style.display = 'table';
+                tbody.innerHTML = logs.map(log => {
                     let changesHtml = '-';
                     if (log.changes) {
                         try {
                             const c = JSON.parse(log.changes);
-                            // changesHtml = `<pre style="font-size: 0.75rem;">${JSON.stringify(c, null, 2)}</pre>`;
-                            // Simplify display
-                            changesHtml = Object.keys(c).map(k => `<b>${k}</b>: ${c[k]}`).join('<br>');
+                            changesHtml = Object.keys(c)
+                                .map(k => `<span style="color: var(--accent-light)">${k}</span>: ${c[k]}`)
+                                .join('<br>');
                         } catch (e) {
                             changesHtml = log.changes;
                         }
                     }
 
-                    row.innerHTML = `
-                        <td>${date}</td>
-                        <td>${log.user_nome || log.user_id}</td>
-                        <td><span class="badge ${getBadgeClass(log.action)}">${log.action}</span></td>
-                        <td>${log.table_name}</td>
-                        <td>${log.record_id}</td>
-                        <td style="font-size: 0.85rem; color: #aaa;">${changesHtml}</td>
+                    const actionClass = log.action === 'CREATE' ? 'badge-ok' :
+                        log.action === 'DELETE' ? 'badge-danger' :
+                            'badge-warning-30';
+
+                    return `
+                        <tr>
+                            <td style="white-space: nowrap;">${Utils.formatDateTime(log.timestamp)}</td>
+                            <td><strong>${log.user_nome || 'Sistema'}</strong></td>
+                            <td><span class="badge ${actionClass}">${log.action}</span></td>
+                            <td><code>${log.table_name}</code></td>
+                            <td>${log.record_id}</td>
+                            <td style="font-size: 0.85rem; max-width: 400px; overflow-wrap: break-word;">${changesHtml}</td>
+                        </tr>
                     `;
-                    tbody.appendChild(row);
-                });
+                }).join('');
 
             } catch (error) {
                 console.error(error);
                 loading.style.display = 'none';
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Erro ao carregar dados</td></tr>`;
+                empty.innerHTML = `<div class="icon">⚠️</div><h3>Erro ao carregar auditoria</h3><p>${error.message}</p>`;
+                empty.style.display = 'block';
             }
         }
-
-        function getBadgeClass(action) {
-            if (action === 'CREATE') return 'badge-ok';
-            if (action === 'UPDATE') return 'badge-warning-30';
-            if (action === 'DELETE') return 'badge-danger';
-            return '';
-        }
-
-        // Load on start
-        loadAuditLogs();
     </script>
+</body>
+
+</html>
 </body>
 
 </html>

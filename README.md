@@ -2,11 +2,12 @@
 
 Sistema Inteligente de Controle de Vencimento de Calibração de Equipamentos
 
-> **Novidades (v2.0):**
-> - 🔐 **Auditoria Completa:** Rastreio de quem criou, editou ou excluiu registros.
-> - 👤 **Perfis de Acesso:** Admin (total) e Laboratório (restrito).
-> - 📢 **Notificações:** Alertas via E-mail, WhatsApp e Voz.
-> - 📱 **Contatos:** Cadastro de email/whatsapp por equipamento.
+> **Novidades (v2.1):**
+> - 🔐 **Auditoria Inteligente:** Rastreio completo de alterações com detalhes de campos.
+> - 👤 **Controle de Acesso:** Perfis Admin e Laboratório com menus dinâmicos.
+> - 🎙️ **Jarvis Voice Assistant:** Saudação personalizada e alertas inteligentes (1x por período).
+> - 📱 **Filtro de Atenção:** Alertas por voz apenas para itens vencidos ou a vencer em 30 dias.
+> - 🔔 **Notificações Multicanal:** E-mail e WhatsApp (Twilio) integrados.
 
 ## 🚀 Início Rápido
 

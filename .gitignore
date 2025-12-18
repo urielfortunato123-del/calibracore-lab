@@ -9,21 +9,41 @@ dist/
 build/
 venv/
 .venv/
+backend/venv/
+backend/dist/
+backend/build/
 
 # Database
 *.db
 *.db-journal
+*.sqlite3
 
 # Environment
 .env
+backend/.env
+.flaskenv
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Uploads
+# Project Specific
 uploads/
+backend/uploads/
+frontend/assets/alert.wav
+CREDENCIAIS_USUARIOS.md
+DIAGNOSTICO_ERRO.bat
+CONFIGURAR_NOVO_PC.bat
+ABRIR_AGORA.bat
+COMPARTILHAR_SP.bat
+INICIAR.bat
+
+# Logs
+*.log
+logs/

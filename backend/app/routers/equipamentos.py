@@ -543,16 +543,26 @@ async def enviar_alerta_manual(
         raise HTTPException(status_code=404, detail="Equipamento não encontrado")
     
     # Determine recipients
-    emails = ["admin@example.com"]
-    whatsapps = ["whatsapp:+1234567890"]
+    admin_email = os.getenv("ADMIN_EMAIL", "admin@calibracore.lab")
+    alert_recipients = os.getenv("ALERT_RECIPIENTS", "")
+    
+    emails = [admin_email]
+    if alert_recipients:
+        emails.extend([e.strip() for e in alert_recipients.split(",") if e.strip()])
+        
+    whatsapps = []
     
     if db_equipamento.email_contato:
         emails.append(db_equipamento.email_contato)
+    
     if db_equipamento.telefone_contato:
         num = db_equipamento.telefone_contato
         if not num.startswith("whatsapp:"):
             num = f"whatsapp:{num}"
         whatsapps.append(num)
+        
+    # Deduplicate emails
+    emails = list(set(emails))
         
     # Force alert regardless of date
     # We call a simplified version or reuse alert_expiration but forcing a body

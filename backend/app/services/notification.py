@@ -14,6 +14,7 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "user@example.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "password")
 FROM_EMAIL = os.getenv("FROM_EMAIL", SMTP_USER)
+ALERT_RECIPIENTS = os.getenv("ALERT_RECIPIENTS", "")
 
 # Twilio configuration (expects env vars)
 TWILIO_SID = os.getenv("TWILIO_SID")
@@ -95,8 +96,18 @@ async def alert_expiration(equipment, recipients_email: List[str], recipients_wh
     else:
         return  # No alert needed
 
+    # Merge with default recipients
+    final_emails = list(recipients_email)
+    if ALERT_RECIPIENTS:
+        final_emails.extend([e.strip() for e in ALERT_RECIPIENTS.split(",") if e.strip()])
+    
+    # Deduplicate
+    final_emails = list(set(final_emails))
+
     # Send email
-    await send_email(recipients_email, subject, body)
+    if final_emails:
+        await send_email(final_emails, subject, body)
+    
     # Send WhatsApp for each number
     for num in recipients_whatsapp:
         await send_whatsapp(num, body)
