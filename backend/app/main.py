@@ -143,7 +143,7 @@ if os.path.exists(frontend_path):
     app.mount("/assets", StaticFiles(directory=os.path.join(frontend_path, "assets")), name="assets")
 
 
-@app.get("/", methods=["GET", "HEAD"])
+@app.api_route("/", methods=["GET", "HEAD"])
 async def serve_index():
     """Serve login page"""
     index_path = os.path.join(frontend_path, "index.html")
@@ -152,7 +152,7 @@ async def serve_index():
     return {"message": f"Bem-vindo ao {settings.APP_NAME}!", "docs": "/api/docs"}
 
 
-@app.get("/dashboard", methods=["GET", "HEAD"])
+@app.api_route("/dashboard", methods=["GET", "HEAD"])
 async def serve_dashboard():
     """Serve dashboard page"""
     dashboard_path = os.path.join(frontend_path, "dashboard.html")
@@ -188,7 +188,7 @@ async def serve_audit():
     return {"message": "Audit", "error": "Frontend not found"}
 
 
-@app.get("/health", methods=["GET", "HEAD"])
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "app": settings.APP_NAME, "version": settings.APP_VERSION}
