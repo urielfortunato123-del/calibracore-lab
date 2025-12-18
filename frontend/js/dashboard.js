@@ -69,9 +69,33 @@ async function loadDashboard() {
 
         // Voice Greeting
         const user = await API.getMe();
+
+        // Fetch expiring items for detailed alert if needed
+        let expiringItems = [];
+        if (resumo.vencidos > 0 || resumo.vence_30_dias > 0) {
+            try {
+                // Get critical/warning items. 
+                // Priority: Vencidos -> Proximo 30
+                let statusFilter = 'vencido';
+                if (resumo.vencidos === 0 && resumo.vence_30_dias > 0) {
+                    statusFilter = 'proximo_30';
+                }
+
+                // Fetch top 5 to have enough
+                const response = await API.getEquipamentos({
+                    status: statusFilter,
+                    per_page: 5,
+                    page: 1
+                });
+                expiringItems = response.items || [];
+            } catch (e) {
+                console.warn('Could not fetch items for voice', e);
+            }
+        }
+
         // Small delay to ensure voices are loaded
         setTimeout(() => {
-            VoiceService.greetUser(user.nome, resumo);
+            VoiceService.greetUser(user.nome, resumo, expiringItems);
         }, 1000);
 
     } catch (error) {

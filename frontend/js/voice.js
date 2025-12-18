@@ -59,7 +59,7 @@ const VoiceService = {
     /**
      * Greet user and report status
      */
-    async greetUser(userName, stats) {
+    async greetUser(userName, stats, expiringItems = []) {
         // Stop any previous speech
         this.synth.cancel();
 
@@ -72,26 +72,31 @@ const VoiceService = {
 
         const firstName = userName.split(' ')[0];
 
-        // Construct message parts for natural flow
-        const parts = [
-            `${greeting}, ${firstName}.`,
-            `O sistema Calibra Core está operante.`
-        ];
+        // Polite intro as requested
+        this.speak(`${greeting}, ${firstName}. Espero que esteja tudo bem.`);
 
-        // 2. Critical Warnings (Vencidos)
-        if (stats.vencidos > 0) {
-            parts.push(`Atenção. Existem ${stats.vencidos} equipamentos vencidos que exigem sua ação imediata.`);
-        }
-        // 3. Warnings (Proximo 30/60)
-        else if (stats.vence_30_dias > 0) {
-            parts.push(`Nota. Você tem ${stats.vence_30_dias} equipamentos vencendo nos próximos trinta dias.`);
-        }
-        else {
-            parts.push("Todos os equipamentos estão em dia.");
-        }
+        // 2. Critical/Warning with Details
+        if (expiringItems.length > 0) {
+            // "O equipamento tal, certificado tal, esta com X dias para vencer"
 
-        // Speak sequence with small pauses handled by the browser queue
-        parts.forEach(part => this.speak(part));
+            // Speak only up to 3 items to avoid fatigue
+            const limit = Math.min(expiringItems.length, 3);
+
+            for (let i = 0; i < limit; i++) {
+                const item = expiringItems[i];
+                const days = item.dias_para_vencer;
+                const text = `O equipamento ${item.descricao}, certificado ${item.numero_certificado || 'não informado'}, está com ${days} dias para vencer.`;
+                this.speak(text);
+            }
+
+            if (expiringItems.length > 3) {
+                const remaining = expiringItems.length - 3;
+                this.speak(`E existem outros ${remaining} equipamentos requerendo atenção.`);
+            }
+        }
+        else if (stats.vencidos === 0 && stats.vence_30_dias === 0) {
+            this.speak("Todos os equipamentos estão em dia. Bom trabalho.");
+        }
     }
 };
 
