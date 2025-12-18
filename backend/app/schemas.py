@@ -93,6 +93,9 @@ class EquipamentoBase(BaseModel):
     data_ultima_calibracao: Optional[date] = None
     data_vencimento: date
     observacoes: Optional[str] = None
+    email_contato: Optional[str] = None
+    telefone_contato: Optional[str] = None
+    notificar_automaticamente: bool = True
 
 
 class EquipamentoCreate(EquipamentoBase):
@@ -111,6 +114,9 @@ class EquipamentoUpdate(BaseModel):
     data_ultima_calibracao: Optional[date] = None
     data_vencimento: Optional[date] = None
     observacoes: Optional[str] = None
+    email_contato: Optional[str] = None
+    telefone_contato: Optional[str] = None
+    notificar_automaticamente: Optional[bool] = None
     ativo: Optional[bool] = None
 
 
@@ -126,6 +132,9 @@ class EquipamentoResponse(EquipamentoBase):
     ativo: bool
     criado_em: datetime
     responsavel_nome: Optional[str] = None
+    email_contato: Optional[str] = None
+    telefone_contato: Optional[str] = None
+    notificar_automaticamente: bool
     
     class Config:
         from_attributes = True

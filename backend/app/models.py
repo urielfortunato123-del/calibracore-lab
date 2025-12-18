@@ -57,6 +57,12 @@ class Equipamento(Base):
     data_vencimento = Column(Date, nullable=False)
     observacoes = Column(Text, nullable=True)
     caminho_certificado = Column(String(500), nullable=True)  # Path to PDF file
+    
+    # Notification fields
+    email_contato = Column(String(100), nullable=True)
+    telefone_contato = Column(String(20), nullable=True)  # WhatsApp
+    notificar_automaticamente = Column(Boolean, default=True)
+
     ativo = Column(Boolean, default=True)
     criado_em = Column(DateTime, default=datetime.utcnow)
     atualizado_em = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

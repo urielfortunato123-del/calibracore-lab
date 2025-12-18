@@ -2,6 +2,12 @@
 
 Sistema Inteligente de Controle de Vencimento de Calibração de Equipamentos
 
+> **Novidades (v2.0):**
+> - 🔐 **Auditoria Completa:** Rastreio de quem criou, editou ou excluiu registros.
+> - 👤 **Perfis de Acesso:** Admin (total) e Laboratório (restrito).
+> - 📢 **Notificações:** Alertas via E-mail, WhatsApp e Voz.
+> - 📱 **Contatos:** Cadastro de email/whatsapp por equipamento.
+
 ## 🚀 Início Rápido
 
 ### Requisitos
@@ -38,6 +44,9 @@ CalibraCore Lab/
 - ✅ Cadastro de equipamentos
 - ✅ Alertas automáticos por e-mail
 - ✅ Controle de acesso por perfil
+- ✅ **Logs de Auditoria** (Novo)
+- ✅ **Alertas via WhatsApp e Voz** (Novo)
+- ✅ **Envio de Alerta Manual** (Novo)
 
 ## 🔔 Regras de Alertas
 
@@ -50,7 +59,17 @@ CalibraCore Lab/
 
 ## 📧 Configuração de E-mail
 
-Edite `backend/app/config.py` com suas credenciais SMTP.
+Edite `backend/.env` com suas credenciais:
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=seu@email.com
+SMTP_PASSWORD=sua_senha
+TWILIO_SID=seu_sid
+TWILIO_AUTH_TOKEN=seu_token
+TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+```
 
 ## 📜 Licença
 

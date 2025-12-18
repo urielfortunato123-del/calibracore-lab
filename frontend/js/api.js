@@ -216,6 +216,12 @@ const API = {
         return await response.json();
     },
 
+    async manualAlert(id) {
+        return this.request(`/api/equipamentos/${id}/alerta/manual`, {
+            method: 'POST'
+        });
+    },
+
     async getLaboratorios() {
         return this.request('/api/equipamentos/laboratorios');
     },

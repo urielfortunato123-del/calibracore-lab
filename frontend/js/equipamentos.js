@@ -122,6 +122,9 @@ async function loadEquipments() {
                 <td>${Utils.getStatusBadge(eq.status)}</td>
                 <td>
                     <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-warning btn-sm btn-icon" onclick="sendManualAlert(${eq.id}, '${escapeStr(eq.codigo_interno)}')" title="Enviar Alerta Agora">
+                            🔔
+                        </button>
                         <button class="btn btn-secondary btn-sm btn-icon" onclick="editEquipment(${eq.id})" title="Editar">
                             ✏️
                         </button>
@@ -231,6 +234,9 @@ function setupModal() {
         form.reset();
         document.getElementById('eq-id').value = '';
         document.getElementById('eq-laboratorio').value = 'Laboratório';
+        document.getElementById('eq-email').value = '';
+        document.getElementById('eq-telefone').value = '';
+        document.getElementById('eq-auto-notify').checked = true;
         fileStatus.style.display = 'none';
         modal.classList.add('active');
     });
@@ -317,7 +323,10 @@ function setupModal() {
             laboratorio: document.getElementById('eq-laboratorio').value,
             data_ultima_calibracao: document.getElementById('eq-ultima-cal').value || null,
             data_vencimento: document.getElementById('eq-vencimento').value,
-            observacoes: document.getElementById('eq-observacoes').value || null
+            observacoes: document.getElementById('eq-observacoes').value || null,
+            email_contato: document.getElementById('eq-email').value || null,
+            telefone_contato: document.getElementById('eq-telefone').value || null,
+            notificar_automaticamente: document.getElementById('eq-auto-notify').checked
         };
 
         try {
@@ -381,7 +390,11 @@ async function editEquipment(id) {
         document.getElementById('eq-ultima-cal').value = eq.data_ultima_calibracao || '';
         document.getElementById('eq-vencimento').value = eq.data_vencimento;
         document.getElementById('eq-laboratorio').value = eq.laboratorio;
+        document.getElementById('eq-laboratorio').value = eq.laboratorio;
         document.getElementById('eq-observacoes').value = eq.observacoes || '';
+        document.getElementById('eq-email').value = eq.email_contato || '';
+        document.getElementById('eq-telefone').value = eq.telefone_contato || '';
+        document.getElementById('eq-auto-notify').checked = eq.notificar_automaticamente !== false; // Default to true if undefined
 
         // Show current file if exists
         const fileStatus = document.getElementById('file-status');
@@ -422,6 +435,21 @@ window.confirmDelete = async function (id, codigo) {
             await API.deleteEquipamento(id);
             Utils.showAlert(document.getElementById('alert-container'), 'Equipamento excluído com sucesso!', 'success');
             loadEquipments();
+        } catch (error) {
+            Utils.showAlert(document.getElementById('alert-container'), error.message, 'error');
+        }
+    }
+};
+
+
+/**
+ * Send Manual Alert
+ */
+window.sendManualAlert = async function (id, codigo) {
+    if (confirm(`Deseja enviar um alerta manual para o equipamento ${codigo}?`)) {
+        try {
+            await API.manualAlert(id);
+            Utils.showAlert(document.getElementById('alert-container'), 'Alerta enviado com sucesso!', 'success');
         } catch (error) {
             Utils.showAlert(document.getElementById('alert-container'), error.message, 'error');
         }

@@ -48,7 +48,10 @@ def equipamento_to_response(eq: Equipamento) -> dict:
         "ativo": eq.ativo,
         "criado_em": eq.criado_em,
         "responsavel_nome": eq.responsavel_usuario.nome if eq.responsavel_usuario else None,
-        "caminho_certificado": eq.caminho_certificado
+        "caminho_certificado": eq.caminho_certificado,
+        "email_contato": eq.email_contato,
+        "telefone_contato": eq.telefone_contato,
+        "notificar_automaticamente": eq.notificar_automaticamente
     }
 
 
@@ -187,7 +190,10 @@ async def criar_equipamento(
         responsavel_id=equipamento.responsavel_id or current_user.id,
         data_ultima_calibracao=equipamento.data_ultima_calibracao,
         data_vencimento=equipamento.data_vencimento,
-        observacoes=equipamento.observacoes
+        observacoes=equipamento.observacoes,
+        email_contato=equipamento.email_contato,
+        telefone_contato=equipamento.telefone_contato,
+        notificar_automaticamente=equipamento.notificar_automaticamente
     )
     
     db.add(db_equipamento)
@@ -198,8 +204,22 @@ async def criar_equipamento(
         "codigo_interno": db_equipamento.codigo_interno,
         "descricao": db_equipamento.descricao,
     })
+    # Determine recipients
+    emails = ["admin@example.com"]
+    whatsapps = ["whatsapp:+1234567890"]
+    
+    if db_equipamento.email_contato:
+        emails.append(db_equipamento.email_contato)
+    if db_equipamento.telefone_contato:
+        # Ensure 'whatsapp:' prefix if using Twilio
+        num = db_equipamento.telefone_contato
+        if not num.startswith("whatsapp:"):
+            num = f"whatsapp:{num}"
+        whatsapps.append(num)
+
     # Send alerts after creation
-    await alert_expiration(db_equipamento, ["admin@example.com"], ["whatsapp:+1234567890"])
+    if db_equipamento.notificar_automaticamente:
+        await alert_expiration(db_equipamento, emails, whatsapps)
 
     return equipamento_to_response(db_equipamento)
 
@@ -241,8 +261,21 @@ async def atualizar_equipamento(
     db.refresh(db_equipamento)
     # Audit log for update (capture changed fields)
     log_action(db, current_user.id, "UPDATE", "equipamentos", db_equipamento.id, update_data)
+    # Determine recipients
+    emails = ["admin@example.com"]
+    whatsapps = ["whatsapp:+1234567890"]
+    
+    if db_equipamento.email_contato:
+        emails.append(db_equipamento.email_contato)
+    if db_equipamento.telefone_contato:
+        num = db_equipamento.telefone_contato
+        if not num.startswith("whatsapp:"):
+            num = f"whatsapp:{num}"
+        whatsapps.append(num)
+
     # Send alerts after update
-    await alert_expiration(db_equipamento, ["admin@example.com"], ["whatsapp:+1234567890"])
+    if db_equipamento.notificar_automaticamente:
+        await alert_expiration(db_equipamento, emails, whatsapps)
 
     return equipamento_to_response(db_equipamento)
 
@@ -494,3 +527,56 @@ async def download_comprovante(
         filename=f"certificado_{db_equipamento.codigo_interno}.pdf",
         content_disposition_type="inline"
     )
+
+
+@router.post("/{equipamento_id}/alerta/manual", status_code=status.HTTP_200_OK)
+async def enviar_alerta_manual(
+    equipamento_id: int,
+    db: Session = Depends(get_db),
+    current_user: Usuario = Depends(require_admin)
+):
+    """
+    Manually trigger an alert for this equipment
+    """
+    db_equipamento = db.query(Equipamento).filter(Equipamento.id == equipamento_id).first()
+    if not db_equipamento:
+        raise HTTPException(status_code=404, detail="Equipamento não encontrado")
+    
+    # Determine recipients
+    emails = ["admin@example.com"]
+    whatsapps = ["whatsapp:+1234567890"]
+    
+    if db_equipamento.email_contato:
+        emails.append(db_equipamento.email_contato)
+    if db_equipamento.telefone_contato:
+        num = db_equipamento.telefone_contato
+        if not num.startswith("whatsapp:"):
+            num = f"whatsapp:{num}"
+        whatsapps.append(num)
+        
+    # Force alert regardless of date
+    # We call a simplified version or reuse alert_expiration but forcing a body
+    # Since alert_expiration logic depends on days, let's reuse it but maybe pass a flag?
+    # Or just construct message here. For simplicity, let's call alert_expiration.
+    # If the equipment is NOT expiring soon, alert_expiration currently returns None (does nothing).
+    # We should probably force a message.
+    
+    # Let's verify days first.
+    days = db_equipamento.dias_para_vencer
+    
+    if days > 60:
+         # Force a "Manual Reminder"
+        from app.services.notification import send_email, send_whatsapp
+        subject = f"🔔 [Manual] Lembrete de Equipamento: {db_equipamento.codigo_interno}"
+        body = f"Olá, este é um lembrete manual sobre o equipamento {db_equipamento.codigo_interno} ({db_equipamento.descricao}). Vencimento: {db_equipamento.data_vencimento}."
+        
+        await send_email(emails, subject, body)
+        for num in whatsapps:
+            await send_whatsapp(num, body)
+            
+        return {"message": "Alerta manual enviado com sucesso (Vencimento distante)"}
+    else:
+        # Use standard logic if it is already in warning period
+        await alert_expiration(db_equipamento, emails, whatsapps)
+        return {"message": "Alerta manual enviado com sucesso (Baseado no vencimento)"}
+
