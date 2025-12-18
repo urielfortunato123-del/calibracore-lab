@@ -208,8 +208,10 @@ async function loadEquipments() {
             return `
             <tr class="${rowClass}">
                 <td><strong>${eq.codigo_interno}</strong></td>
-                <td>${eq.descricao}</td>
-                <td>${eq.laboratorio}</td>
+                <td>${eq.categoria || '-'}</td>
+                <td>${eq.marca || '-'}</td>
+                <td>${eq.numero_certificado || '-'}</td>
+                <td>${eq.numero_serie || '-'}</td>
                 <td>${Utils.formatDate(eq.data_ultima_calibracao)}</td>
                 <td>${Utils.formatDate(eq.data_vencimento)}</td>
                 <td>${eq.dias_para_vencer >= 0 ? eq.dias_para_vencer : Math.abs(eq.dias_para_vencer) + ' (atraso)'}</td>
