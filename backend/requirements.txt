@@ -29,3 +29,7 @@ python-dotenv>=1.0.0
 
 openpyxl>=3.1.0
 fpdf2>=2.7.0
+
+# Notifications
+twilio>=8.0.0
+pyttsx3>=2.90

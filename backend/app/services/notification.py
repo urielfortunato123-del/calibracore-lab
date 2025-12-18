@@ -21,8 +21,12 @@ TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
 TWILIO_WHATSAPP_NUMBER = os.getenv("TWILIO_WHATSAPP_NUMBER")  # e.g., 'whatsapp:+14155238886'
 
 # Voice engine initialization (offline)
-engine = pyttsx3.init()
-engine.setProperty('rate', 150)
+try:
+    engine = pyttsx3.init()
+    engine.setProperty('rate', 150)
+except Exception as e:
+    logger.warning(f"Voice engine initialization failed (expected on headless server): {e}")
+    engine = None
 
 async def send_email(to: List[str], subject: str, body: str) -> bool:
     """Send an email to a list of recipients.
@@ -61,10 +65,12 @@ async def send_whatsapp(to_number: str, message: str) -> bool:
 def send_voice_alert(message: str) -> bool:
     """Play a voice alert on the server (useful for local deployments)."""
     try:
-        engine.say(message)
-        engine.runAndWait()
-        logger.info("Voice alert played.")
-        return True
+        if engine:
+            engine.say(message)
+            engine.runAndWait()
+            logger.info("Voice alert played.")
+            return True
+        return False
     except Exception as e:
         logger.error(f"Voice alert failed: {e}")
         return False
