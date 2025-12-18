@@ -3,6 +3,9 @@ CalibraCore Lab - Equipment Router
 """
 from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
+from app.services.audit import log_action
+from app.services.notification import alert_expiration
+from app.auth import require_admin
 from fastapi.responses import StreamingResponse, FileResponse
 import os
 import shutil
@@ -158,7 +161,7 @@ async def obter_equipamento(
 async def criar_equipamento(
     equipamento: EquipamentoCreate,
     db: Session = Depends(get_db),
-    current_user: Usuario = Depends(get_current_user)
+    current_user: Usuario = Depends(require_admin)
 ):
     """
     Create new equipment
@@ -190,7 +193,14 @@ async def criar_equipamento(
     db.add(db_equipamento)
     db.commit()
     db.refresh(db_equipamento)
-    
+    # Audit log for creation
+    log_action(db, current_user.id, "CREATE", "equipamentos", db_equipamento.id, {
+        "codigo_interno": db_equipamento.codigo_interno,
+        "descricao": db_equipamento.descricao,
+    })
+    # Send alerts after creation
+    await alert_expiration(db_equipamento, ["admin@example.com"], ["whatsapp:+1234567890"])
+
     return equipamento_to_response(db_equipamento)
 
 
@@ -199,7 +209,7 @@ async def atualizar_equipamento(
     equipamento_id: int,
     equipamento: EquipamentoUpdate,
     db: Session = Depends(get_db),
-    current_user: Usuario = Depends(get_current_user)
+    current_user: Usuario = Depends(require_admin)
 ):
     """
     Update equipment
@@ -226,10 +236,14 @@ async def atualizar_equipamento(
     update_data = equipamento.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_equipamento, field, value)
-    
+
     db.commit()
     db.refresh(db_equipamento)
-    
+    # Audit log for update (capture changed fields)
+    log_action(db, current_user.id, "UPDATE", "equipamentos", db_equipamento.id, update_data)
+    # Send alerts after update
+    await alert_expiration(db_equipamento, ["admin@example.com"], ["whatsapp:+1234567890"])
+
     return equipamento_to_response(db_equipamento)
 
 
@@ -251,7 +265,11 @@ async def deletar_equipamento(
     
     db_equipamento.ativo = False
     db.commit()
-    
+    # Audit log for delete (soft)
+    log_action(db, current_user.id, "DELETE", "equipamentos", db_equipamento.id, None)
+    # Send alert for deletion if needed (optional)
+    await alert_expiration(db_equipamento, ["admin@example.com"], ["whatsapp:+1234567890"])
+
     return {"message": "Equipamento desativado com sucesso"}
 
 

@@ -105,3 +105,16 @@ class AlertaEnviado(Base):
     
     # Relationships
     equipamento = relationship("Equipamento", back_populates="alertas")
+class AuditLog(Base):
+    """Audit log for tracking create, update, delete actions on models"""
+    __tablename__ = "audit_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    action = Column(String(20), nullable=False)  # CREATE, UPDATE, DELETE
+    table_name = Column(String(50), nullable=False)
+    record_id = Column(Integer, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    changes = Column(Text, nullable=True)  # JSON string of changed fields
+
+    user = relationship("Usuario")
