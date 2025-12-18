@@ -169,3 +169,20 @@ class ProcessarAlertasResponse(BaseModel):
     alertas_enviados: int
     erros: int
     detalhes: List[dict]
+
+
+# ============= Audit Schemas =============
+
+class AuditLogResponse(BaseModel):
+    id: int
+    user_id: int
+    action: str
+    table_name: str
+    record_id: int
+    timestamp: datetime
+    changes: Optional[str] = None
+    user_nome: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+

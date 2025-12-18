@@ -12,7 +12,7 @@ from app.config import settings
 from app.database import init_db, SessionLocal
 from app.models import Usuario, UserRole
 from app.auth import get_password_hash
-from app.routers import auth, equipamentos, usuarios, dashboard, alertas
+from app.routers import auth, equipamentos, usuarios, dashboard, alertas, audit
 
 # Configure logging
 logging.basicConfig(
@@ -130,6 +130,7 @@ app.include_router(equipamentos.router)
 app.include_router(usuarios.router)
 app.include_router(dashboard.router)
 app.include_router(alertas.router)
+app.include_router(audit.router)
 
 
 # Serve frontend static files
@@ -176,6 +177,15 @@ async def serve_usuarios():
     if os.path.exists(users_path):
         return FileResponse(users_path)
     return {"message": "Usuários", "error": "Frontend not found"}
+
+
+@app.get("/audit.html")
+async def serve_audit():
+    """Serve audit page"""
+    audit_path = os.path.join(frontend_path, "audit.html")
+    if os.path.exists(audit_path):
+        return FileResponse(audit_path)
+    return {"message": "Audit", "error": "Frontend not found"}
 
 
 @app.get("/health", methods=["GET", "HEAD"])
