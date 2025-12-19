@@ -174,73 +174,72 @@
                                 placeholder="Ex: Solotest, Marte, Delta">
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                            <div class="form-group">
-                                <label class="form-label" for="eq-certificado">Nº Certificado</label>
-                                <input type="text" class="form-control" id="eq-certificado" placeholder="Ex: 82! ">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="eq-serie">Nº de Série</label>
-                                <input type="text" class="form-control" id="eq-serie" placeholder="Ex: 1234">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="eq-arquivo-certificado">Arquivo PDF 📎</label>
-                                <input type="file" class="form-control" id="eq-arquivo-certificado"
-                                    accept="application/pdf">
-                                <small class="text-muted" id="file-status" style="display: none;">Arquivo atual: <a
-                                        href="#" target="_blank">Ver</a></small>
-                            </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eq-serie">Nº de Série</label>
+                            <input type="text" class="form-control" id="eq-serie" placeholder="Ex: 1234ABCD">
                         </div>
+                    </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div class="form-group">
-                                <label class="form-label" for="eq-ultima-cal">Data da Calibração</label>
-                                <input type="date" class="form-control" id="eq-ultima-cal">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label" for="eq-vencimento">Data de Vencimento *</label>
-                                <input type="date" class="form-control" id="eq-vencimento" required>
-                            </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="eq-certificado">Nº Certificado</label>
+                            <input type="text" class="form-control" id="eq-certificado" placeholder="Ex: 82512-25">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="eq-laboratorio">Laboratório *</label>
-                            <input type="text" class="form-control" id="eq-laboratorio" required
-                                placeholder="Ex: Laboratório de Solos" value="Laboratório">
+                            <label class="form-label" for="eq-arquivo-certificado">Arquivo PDF 📎</label>
+                            <input type="file" class="form-control" id="eq-arquivo-certificado"
+                                accept="application/pdf">
+                            <small class="text-muted" id="file-status" style="display: none;">Arquivo atual: <a href="#"
+                                    target="_blank">Ver</a></small>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="eq-ultima-cal">Data da Calibração</label>
+                            <input type="date" class="form-control" id="eq-ultima-cal">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="eq-observacoes">Observações</label>
-                            <textarea class="form-control" id="eq-observacoes" rows="2"
-                                placeholder="Informações adicionais..."></textarea>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div class="form-group">
-                                <label class="form-label" for="eq-email">Email de Contato 📧</label>
-                                <input type="email" class="form-control" id="eq-email"
-                                    placeholder="empresa@exemplo.com">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="eq-telefone">WhatsApp (Telefone) 📱</label>
-                                <input type="text" class="form-control" id="eq-telefone" placeholder="+5511999999999">
-                            </div>
-                        </div>
-
-                        <div class="form-group"
-                            style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                            <input type="checkbox" id="eq-auto-notify" checked style="width: 20px; height: 20px;">
-                            <label for="eq-auto-notify" style="margin: 0; cursor: pointer;">Notificar Automaticamente
-                                sobre Vencimento 🔔</label>
+                            <label class="form-label" for="eq-vencimento">Data de Vencimento *</label>
+                            <input type="date" class="form-control" id="eq-vencimento" required>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar</button>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eq-laboratorio">Laboratório *</label>
+                        <input type="text" class="form-control" id="eq-laboratorio" required
+                            placeholder="Ex: Laboratório de Solos" value="Laboratório">
                     </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eq-observacoes">Observações</label>
+                        <textarea class="form-control" id="eq-observacoes" rows="2"
+                            placeholder="Informações adicionais..."></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="eq-email">Email de Contato 📧</label>
+                            <input type="email" class="form-control" id="eq-email" placeholder="empresa@exemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="eq-telefone">WhatsApp (Telefone) 📱</label>
+                            <input type="text" class="form-control" id="eq-telefone" placeholder="+5511999999999">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                        <input type="checkbox" id="eq-auto-notify" checked style="width: 20px; height: 20px;">
+                        <label for="eq-auto-notify" style="margin: 0; cursor: pointer;">Notificar Automaticamente
+                            sobre Vencimento 🔔</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar</button>
+                </div>
             </form>
         </div>
     </div>
@@ -272,9 +271,9 @@
         </div>
     </div>
 
-    <script src="/js/api.js?v=debug5"></script>
-    <script src="/js/auth.js?v=debug5"></script>
-    <script src="/js/equipamentos.js?v=debug5"></script>
+    <script src="/js/api.js?v=v2.1"></script>
+    <script src="/js/auth.js?v=v2.1"></script>
+    <script src="/js/equipamentos.js?v=v2.1"></script>
 </body>
 
 </html>
