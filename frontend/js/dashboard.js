@@ -76,9 +76,9 @@ async function loadDashboard() {
             try {
                 // Get critical/warning items. 
                 // Priority: Vencidos -> Proximo 30
-                // Fetch top 20 to find items at specific thresholds (30, 15, 7)
+                // Fetch top 20 items (sorted by soonest expiration by default in backend)
+                // This will include Vencidos, Proximo 30, etc.
                 const response = await API.getEquipamentos({
-                    status: 'proximo_30', // Fetches everything <= 30 days
                     per_page: 20,
                     page: 1
                 });
@@ -88,10 +88,12 @@ async function loadDashboard() {
             }
         }
 
-        // Small delay to ensure voices are loaded
+        // Small delay to ensure voices are loaded and avoid race conditions
         setTimeout(() => {
-            VoiceService.greetUser(user.nome, resumo, expiringItems);
-        }, 1000);
+            const forceDebug = new URLSearchParams(window.location.search).has('debug_jarvis');
+            console.log('Dashboard: Triggering Jarvis', { items: expiringItems.length, force: forceDebug });
+            VoiceService.greetUser(user.nome, resumo, expiringItems, forceDebug);
+        }, 1500);
 
     } catch (error) {
         console.error('Error loading dashboard:', error);

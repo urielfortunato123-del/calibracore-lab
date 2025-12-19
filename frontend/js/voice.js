@@ -110,19 +110,35 @@ const VoiceService = {
      */
     loadVoice() {
         const voices = this.synth.getVoices();
+        if (voices.length === 0) {
+            console.warn('Jarvis: No voices available yet.');
+            return;
+        }
+
         this.voice = voices.find(v => v.name.includes('Google Português do Brasil')) ||
             voices.find(v => v.name.includes('Luciana')) ||
-            voices.find(v => v.lang === 'pt-BR') ||
+            voices.find(v => v.lang === 'pt-BR' || v.lang.startsWith('pt')) ||
             voices[0];
+
+        console.log('Jarvis: Voice loaded ->', this.voice ? this.voice.name : 'None');
     },
 
     /**
      * Speak text
      */
     speak(text, priority = false) {
-        if (!this.synth || !this.voice) return;
+        if (!this.synth) return;
+
+        // If voice not loaded, try to load it now
+        if (!this.voice) this.loadVoice();
+        if (!this.voice) {
+            console.warn('Jarvis: Cannot speak, no voice loaded.');
+            return;
+        }
+
         if (priority) this.synth.cancel();
 
+        console.log('Jarvis speaking:', text);
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.voice = this.voice;
         utterance.rate = 0.9;
@@ -134,7 +150,8 @@ const VoiceService = {
     /**
      * Greet user and report status
      */
-    async greetUser(userName, stats, expiringItems = []) {
+    async greetUser(userName, stats, expiringItems = [], force = false) {
+        console.log('Jarvis: greetUser called', { userName, stats, itemCount: expiringItems.length });
         this.synth.cancel();
 
         const now = new Date();
@@ -149,8 +166,8 @@ const VoiceService = {
         const lastAlertKey = `jarvis_last_alert_${period}`;
         const lastAlertDate = localStorage.getItem(lastAlertKey);
 
-        if (lastAlertDate === dateStr) {
-            console.log(`Jarvis already spoke in the ${period} of ${dateStr}. Skipping.`);
+        if (lastAlertDate === dateStr && !force) {
+            console.log(`Jarvis: already spoke in the ${period} of ${dateStr}. Use force=true to override.`);
             return;
         }
 
