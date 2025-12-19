@@ -76,15 +76,10 @@ async function loadDashboard() {
             try {
                 // Get critical/warning items. 
                 // Priority: Vencidos -> Proximo 30
-                let statusFilter = 'vencido';
-                if (resumo.vencidos === 0 && resumo.vence_30_dias > 0) {
-                    statusFilter = 'proximo_30';
-                }
-
-                // Fetch top 5 to have enough
+                // Fetch top 20 to find items at specific thresholds (30, 15, 7)
                 const response = await API.getEquipamentos({
-                    status: statusFilter,
-                    per_page: 5,
+                    status: 'proximo_30', // Fetches everything <= 30 days
+                    per_page: 20,
                     page: 1
                 });
                 expiringItems = response.items || [];

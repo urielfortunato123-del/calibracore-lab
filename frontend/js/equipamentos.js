@@ -117,6 +117,7 @@ async function loadEquipments() {
                         </a>
                     ` : (eq.numero_certificado || '-')}
                 </td>
+                <td>${eq.numero_serie || '-'}</td>
                 <td>${Utils.formatDate(eq.data_ultima_calibracao)}</td>
                 <td>${Utils.formatDate(eq.data_vencimento)}</td>
                 <td>${Utils.getStatusBadge(eq.status)}</td>
@@ -233,6 +234,8 @@ function setupModal() {
         document.getElementById('modal-title').textContent = 'Novo Equipamento';
         form.reset();
         document.getElementById('eq-id').value = '';
+        document.getElementById('eq-certificado').value = '';
+        document.getElementById('eq-serie').value = '';
         document.getElementById('eq-laboratorio').value = 'Laboratório';
         document.getElementById('eq-email').value = '';
         document.getElementById('eq-telefone').value = '';
@@ -320,6 +323,7 @@ function setupModal() {
             categoria: categoria,
             marca: document.getElementById('eq-marca').value || null,
             numero_certificado: document.getElementById('eq-certificado').value || null,
+            numero_serie: document.getElementById('eq-serie').value || null,
             laboratorio: document.getElementById('eq-laboratorio').value,
             data_ultima_calibracao: document.getElementById('eq-ultima-cal').value || null,
             data_vencimento: document.getElementById('eq-vencimento').value,
@@ -387,6 +391,7 @@ async function editEquipment(id) {
         document.getElementById('eq-descricao').value = eq.descricao || '';
         document.getElementById('eq-marca').value = eq.marca || '';
         document.getElementById('eq-certificado').value = eq.numero_certificado || '';
+        document.getElementById('eq-serie').value = eq.numero_serie || '';
         document.getElementById('eq-ultima-cal').value = eq.data_ultima_calibracao || '';
         document.getElementById('eq-vencimento').value = eq.data_vencimento;
         document.getElementById('eq-laboratorio').value = eq.laboratorio;
